@@ -33,55 +33,98 @@ def DFS(puzzle):
     states_searched: An ordered list of all states searched.
     final_solution: An ordered list of moves representing the final solution.
     """
-    parent_node = Node(puzzle)
-    print(parent_node)
-    states_searched = [Node(puzzle, parent=parent_node, move=None)] # queue
-    print(states_searched[0])
-    
-    ##print(Node(puzzle).state.puzzle)
-    ##print(Node(puzzle.swap(2,0, 0 ,0)))
 
-    path = [] #Visited
+    parent_node = Node(puzzle)
+    states_searched = [Node(puzzle=puzzle, parent=parent_node, move=None)]
+    visited = []
     final_solution = []
 
+    pos_x, pos_y = Node(puzzle).state.zero
+    max_x = len(parent_node.state.puzzle) - 1
+    max_y = len(parent_node.state.puzzle[0]) - 1
+
     while states_searched:
+        node = states_searched[0]
+        visited.append(node)
 
-        vertex = states_searched.pop(0)
-        print(vertex.state.puzzle)
-        if vertex in path: # leaf nodde or visited, go to next item. 
-            continue
-        
-        path.append(vertex) 
-        if vertex.state.check_puzzle():
-            print("vertex is a solved problem.")
-            return states_searched, final_solution
-        # calculate how many moves i can make then add them to stack? YES add to states_se
+        if node.state.check_puzzle() :
+            print("Solution found at. ", node.state.puzzle.depth)
+            print(node.state.print())
+            break
 
-        print("UP")
-        nx = 0
-        ny = 0
-        for x in range(len(vertex.state.puzzle)):
-            for y in range(len(vertex.state.puzzle[0])):
-                if vertex.state.puzzle[x][y] == 0:
-                    nx += x
-                    ny += y
-                    break
-
-        print(nx)
-        print(ny)
-
-        for i in range(3):## can only generate a max of <=4 new moves
+        for i in range(3):
             if i == 0:
                 print("UP")
-
+                pos_x, pos_y = node.state.zero
+                new_x = pos_x - 1
+                new_y = pos_y
+                if new_x <= max_x and new_x >= 0:
+                    pos_x, pos_y = node.state.zero
+                    leaf_node = Node(puzzle=node.state, parent=parent_node, move=UP).state.swap(pos_x, pos_y, new_x, new_y)
+                      # this shoudl be a node?
+                    states_searched.append(leaf_node)
+                    print("Creating new leaf node from up move",leaf_node.state.print_puzzle())
+                    print( pos_x, pos_y )
+                    print( new_x, new_y )
+                    continue
+                else:
+                    continue
             elif i == 1:
                 print("LEFT")
+                pos_x, pos_y = node.state.zero
+                new_x = pos_x
+                new_y = pos_y - 1
+                if new_y >= 0 and new_y <= max_y:
+                    print("ENTER")
+                    pos_x, pos_y = node.state.zero
 
+                    leaf_node = Node(puzzle=node.state, parent=parent_node, move=LEFT).state.swap(pos_x, pos_y, new_x, new_y)
+                    states_searched.append(leaf_node)
+                    print("Creating new leaf node from up move",leaf_node.state.print_puzzle())
+                    print( pos_x, pos_y )
+                    print( new_x, new_y )
+                    continue
+                else: 
+                    continue
             elif i == 2:
-                print("Down")
-            
+                print("DOWN")
+                pos_x, pos_y = node.state.zero
+                new_x = pos_x + 1
+                new_y = pos_y
+                if new_x >= 0 and new_x <= max_x:
+                    pos_x, pos_y = node.state.zero
+
+                    #leaf_node = Node(puzzle=node.state.puzzle, parent=parent_node, move=DOWN).state.swap(pos_x, pos_y, new_x, new_y)
+                    leaf_node = Node(puzzle=node.state, parent=parent_node, move=DOWN).state.swap(pos_x, pos_y,new_x, new_y)
+                    # this shoudl be a node? 
+
+                    states_searched.append(leaf_node)
+                    print("Creating new leaf node from up move", leaf_node.state.print_puzzle() )
+                    print( pos_x, pos_y )
+                    print( new_x, new_y )                    
+                    continue
+                else: 
+                    continue
+            elif i == 3:
+                print("RIGHT")
+                pos_x, pos_y = node.state.zero
+                new_x = pos_x
+                new_y = pos_y + 1
+                if new_y >= 0 and new_y <= max_y:
+                    pos_x, pos_y = node.state.zero
+
+                    leaf_node = Node(puzzle=node.state, parent=parent_node, move=RIGHT).state.swap(pos_x, pos_y, new_x, new_y)
+                      # this shoudl be a node? 
+                    states_searched.append(leaf_node)
+                    print("Creating new leaf node from up move",leaf_node.state.print_puzzle())
+                    print( pos_x, pos_y )
+                    print( new_x, new_y )
+                    continue
+                else: 
+                    continue
             else:
-                print("Error.")
+                print("Error")
+    
 
 
     # TODO: WRITE CODE

@@ -1,4 +1,7 @@
+from turtle import pu
 from helpers import Node, NPuzzle, LEFT, RIGHT, UP, DOWN
+import copy
+
 
 
 def BFS(puzzle):
@@ -35,7 +38,7 @@ def DFS(puzzle):
     """
 
     parent_node = Node(puzzle)
-    states_searched = [Node(puzzle=puzzle, parent=parent_node, move=None)]
+    states_searched = [ Node(puzzle=puzzle, parent=parent_node, move=None) ]
     visited = []
     final_solution = []
 
@@ -44,88 +47,101 @@ def DFS(puzzle):
     max_y = len(parent_node.state.puzzle[0]) - 1
 
     while states_searched:
-        node = states_searched[0]
+        node = states_searched.pop(0)
+        if node in visited:
+            continue
+
         visited.append(node)
 
         if node.state.check_puzzle() :
-            print("Solution found at. ", node.state.puzzle.depth)
-            print(node.state.print())
-            break
+            print("Solution found at. ", Node(node.state.puzzle).state.print_puzzle())
+            return states_searched, final_solution
+        
+        pos_x, pos_y = node.state.zero
 
         for i in range(3):
             if i == 0:
-                print("UP")
-                pos_x, pos_y = node.state.zero
-                new_x = pos_x - 1
-                new_y = pos_y
-                if new_x <= max_x and new_x >= 0:
-                    pos_x, pos_y = node.state.zero
-                    leaf_node = Node(puzzle=node.state, parent=parent_node, move=UP).state.swap(pos_x, pos_y, new_x, new_y)
-                      # this shoudl be a node?
+                print("---------------------------------")
+                print("Current Position: " , pos_x, pos_y)
+                print("---------------------------------")
+                print("MAX cord", max_x, max_y)
+
+                newx = pos_x - 1
+                newy = pos_y
+                print("NEW pos: ", newx, newy)
+
+                if newx <= max_x and newx >= 0:
+                    print("MOVE UP")
+                    clone = copy.deepcopy(node.state)
+                    leaf_node = Node(puzzle=puzzle, parent=parent_node, move=UP)
+                    leaf_node.state.swap(pos_x, pos_y, newx, newy)
+                    print("New puzzle: ")
+                    leaf_node.print_puzzle() 
                     states_searched.append(leaf_node)
-                    print("Creating new leaf node from up move",leaf_node.state.print_puzzle())
-                    print( pos_x, pos_y )
-                    print( new_x, new_y )
-                    continue
+                    print("---------------------------------")
                 else:
+                    print("SKIPPING")
                     continue
             elif i == 1:
-                print("LEFT")
-                pos_x, pos_y = node.state.zero
-                new_x = pos_x
-                new_y = pos_y - 1
-                if new_y >= 0 and new_y <= max_y:
-                    print("ENTER")
-                    pos_x, pos_y = node.state.zero
+                print("---------------------------------")
+                print("Current Position: " , pos_x, pos_y)
+                print("---------------------------------")
+                print("MAX cord", max_x, max_y)
+                newx = pos_x - 1
+                newy = pos_y
+                print("NEW pos: ", newx, newy)
+                if newx >= 0 and newx <= max_x:
+                    print("MOVE LEFT")
+                    clone = copy.deepcopy(node.state)
+                    leaf_node = Node(puzzle=puzzle, parent=parent_node, move=LEFT)
+                    leaf_node.state.swap(pos_x, pos_y, newx, newy)
+                    print("New puzzle: ")
+                    leaf_node.print_puzzle() 
 
-                    leaf_node = Node(puzzle=node.state, parent=parent_node, move=LEFT).state.swap(pos_x, pos_y, new_x, new_y)
                     states_searched.append(leaf_node)
-                    print("Creating new leaf node from up move",leaf_node.state.print_puzzle())
-                    print( pos_x, pos_y )
-                    print( new_x, new_y )
-                    continue
+                    print("---------------------------------")
                 else: 
+                    print("SKIPPING")
                     continue
             elif i == 2:
-                print("DOWN")
+                print("---------------------------------")
                 pos_x, pos_y = node.state.zero
-                new_x = pos_x + 1
-                new_y = pos_y
-                if new_x >= 0 and new_x <= max_x:
-                    pos_x, pos_y = node.state.zero
+                print("Current Position: " , pos_x, pos_y)
+                print("---------------------------------")
+                newx = pos_x + 1
+                newy = pos_y
+                if newx >= 0 and newx <= max_x:
+                    print("MOVE DOWN") 
+                    clone = copy.deepcopy(node.state)
+                    leaf_node = Node(puzzle=clone, parent=parent_node, move=DOWN)
+                    leaf_node.state.swap(pos_x, pos_y, newx, newy)
+                    print("New puzzle: ")
 
-                    #leaf_node = Node(puzzle=node.state.puzzle, parent=parent_node, move=DOWN).state.swap(pos_x, pos_y, new_x, new_y)
-                    leaf_node = Node(puzzle=node.state, parent=parent_node, move=DOWN).state.swap(pos_x, pos_y,new_x, new_y)
-                    # this shoudl be a node? 
-
-                    states_searched.append(leaf_node)
-                    print("Creating new leaf node from up move", leaf_node.state.print_puzzle() )
-                    print( pos_x, pos_y )
-                    print( new_x, new_y )                    
-                    continue
+                    states_searched.append(leaf_node) 
+                    print("---------------------------------")                 
                 else: 
+                    print("SKIPPING")
                     continue
             elif i == 3:
-                print("RIGHT")
-                pos_x, pos_y = node.state.zero
-                new_x = pos_x
-                new_y = pos_y + 1
-                if new_y >= 0 and new_y <= max_y:
-                    pos_x, pos_y = node.state.zero
-
-                    leaf_node = Node(puzzle=node.state, parent=parent_node, move=RIGHT).state.swap(pos_x, pos_y, new_x, new_y)
-                      # this shoudl be a node? 
+                print("---------------------------------")
+                print("Current Position: " , pos_x, pos_y)
+                print("---------------------------------")
+                newx = pos_x
+                newy = pos_y + 1
+                if newy >= 0 and newy <= max_y:
+                    print("MOVE RIGHT")
+                    clone = copy.deepcopy(node.state)
+                    leaf_node = Node(puzzle=node.state,parent=parent_node, move=RIGHT)
+                    leaf_node.state.swap(pos_x, pos_y, newx, newy )
+                    print("New puzzle: ")
+                    leaf_node.print_puzzle() 
                     states_searched.append(leaf_node)
-                    print("Creating new leaf node from up move",leaf_node.state.print_puzzle())
-                    print( pos_x, pos_y )
-                    print( new_x, new_y )
-                    continue
+                    print("---------------------------------")
                 else: 
+                    print("SKIPPING")
                     continue
             else:
                 print("Error")
-    
-
 
     # TODO: WRITE CODE
 
